@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div class="container">
-      <vue-autosuggest :suggestions="filteredOptions" @input="onInputChange" :on-selected="onSelected" :limit="10">
+      <vue-autosuggest :suggestions="filteredOptions" @input="onInputChange" @selected="onSelected" :limit="10">
       </vue-autosuggest>
       <div v-if="selected">
-        You have selected:
+        You have selected: {{ selected }}
       </div>
     </div>
   </div>
@@ -29,6 +29,7 @@ export default {
       options: [{
         data: []
       }],
+      artists: [],
       filteredOptions: [],
       limit: 10
     };
@@ -37,6 +38,7 @@ export default {
   methods: {
     onSelected(option) {
       this.selected = option.item;
+      console.log(this.artists.find(artist => artist.title == this.selected))
     },
 
     dude: debounce(async function(search) {
@@ -45,16 +47,16 @@ export default {
         const response = await axios(url, {
           params: {
             q: search,
-            token: apiToken
+            token: apiToken,
+            type: "track"
           }
         });
 
         const artists = response.data.results.map(artist => artist.title)
         //const releases = response.data.results.map(release => release.title)
-
+        this.artists = response.data.results
         this.filteredOptions = [{
-          data: artists
-
+          data: artists,
         }]
       } catch (error) {
         console.error(error);
