@@ -7,9 +7,10 @@
   },
   "dependencies": {
     "axios": "^0.20.0",
+    "debounce": "^1.2.0",
+    "disconnect": "^1.2.1",
     "vue": "2.6.12",
     "vue-autosuggest": "^2.2.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

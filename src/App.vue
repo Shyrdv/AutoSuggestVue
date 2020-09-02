@@ -1,19 +1,19 @@
 <template>
   <div id="app">
     <div class="container">
-      <vue-autosuggest :suggestions="filteredOptions" @input="onInputChange" :on-selected="onSelected" :limit="10"></vue-autosuggest>
+      <vue-autosuggest :suggestions="filteredOptions" @input="onInputChange" :on-selected="onSelected" :limit="30"></vue-autosuggest>
       <div v-if="selected">
         You have selected:
-        <code>
-          <pre>{{JSON.stringify(selected, null, 4)}}</pre>
-        </code>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import { VueAutosuggest } from "vue-autosuggest";
+
+const apiToken = 'pEgfzuCQxzBqwQVLHndlziGJBcroflGEPWsATbBE'
 
 export default {
   name: "app",
@@ -34,19 +34,32 @@ export default {
     onSelected(option) {
       this.selected = option.item;
     },
+    async dude(search) {
+      const url = 'https://api.discogs.com/database/search'
+      try {
+        const response = await axios(url, {
+          params: {
+            q: search,
+            token: apiToken
+          }
+        });
+        const artists = response.data.results.map(artist => artist.title)
+        //const releases = response.data.results.map(release => release.title)
+
+        this.filteredOptions = [{
+          data: artists
+
+        }]
+      } catch (error) {
+        console.error(error);
+      }
+    },
     onInputChange(text) {
       if (text === '' || text === undefined) {
         return;
       }
 
-      /* Full control over filtering. Maybe fetch from API?! Up to you!!! */
-      const filteredData = this.options[0].data.filter(item => {
-        return item.toLowerCase().indexOf(text.toLowerCase()) > -1;
-      }).slice(0, this.limit);
-
-      this.filteredOptions = [{
-        data: filteredData
-      }];
+      this.dude(text)
     }
   }
 };
