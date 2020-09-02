@@ -15,7 +15,7 @@ import axios from 'axios'
 import { VueAutosuggest } from "vue-autosuggest";
 import { debounce } from "debounce";
 
-const apiToken = 'pEgfzuCQxzBqwQVLHndlziGJBcroflGEPWsATbBE'
+const apiToken = 'Authorization: Bearer BQBQhZh6oLeljgM9CbkinhJv8xOaLCfCBtZvxuDojtG6AZWj9Az5HNDzdDOGt1BGmKkAgNilV5OE-H_jL2BVG4pd0q27sByPTD9fD8OlIr_kej6shbDo4OWVjuH5JqD8UYnyxBxl4tj3HRjtH6v_XQ","token_type":"Bearer","expires_in":3600,"refresh_token":"AQAps-VH3E2tjXw0_h5LW37qV1HOg8XFmasgKR9HqJmhAqp1_ixGGjdjaxCtkBNfuIIeh1JnNhce_Uq7B9jCYrTrU9p7GceelJwEsRqjF0bXkCLxckzo_4iEVBqFZYTmmG4'
 
 export default {
   name: "app",
@@ -42,13 +42,13 @@ export default {
     },
 
     dude: debounce(async function(search) {
-      const url = 'https://api.discogs.com/database/search'
+      const url = 'https://api.spotify.com/v1/search'
       try {
         const response = await axios(url, {
           params: {
             q: search,
             token: apiToken,
-            type: "track"
+            //type: "track"
           }
         });
 
