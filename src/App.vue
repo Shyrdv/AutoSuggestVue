@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div class="container">
-      <vue-autosuggest :suggestions="filteredOptions" @input="onInputChange" :on-selected="onSelected" :limit="30"></vue-autosuggest>
+      <vue-autosuggest :suggestions="filteredOptions" @input="onInputChange" :on-selected="onSelected" :limit="10">
+      </vue-autosuggest>
       <div v-if="selected">
         You have selected:
       </div>
@@ -12,6 +13,7 @@
 <script>
 import axios from 'axios'
 import { VueAutosuggest } from "vue-autosuggest";
+import { debounce } from "debounce";
 
 const apiToken = 'pEgfzuCQxzBqwQVLHndlziGJBcroflGEPWsATbBE'
 
@@ -20,21 +22,24 @@ export default {
   components: {
     VueAutosuggest
   },
+
   data() {
     return {
-      selected: '',
+      selected: "",
       options: [{
-        data: ['Frodo', 'Samwise', 'Gandalf', 'Galadriel', 'Faramir', 'Éowyn', 'Peregrine Took', 'Boromir', 'Legolas', 'Gimli', 'Gollum', 'Beren', 'Saruman', 'Sauron', 'Théoden']
+        data: []
       }],
       filteredOptions: [],
       limit: 10
     };
   },
+
   methods: {
     onSelected(option) {
       this.selected = option.item;
     },
-    async dude(search) {
+
+    dude: debounce(async function(search) {
       const url = 'https://api.discogs.com/database/search'
       try {
         const response = await axios(url, {
@@ -43,6 +48,7 @@ export default {
             token: apiToken
           }
         });
+
         const artists = response.data.results.map(artist => artist.title)
         //const releases = response.data.results.map(release => release.title)
 
@@ -53,12 +59,11 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    },
+    }, 500),
     onInputChange(text) {
       if (text === '' || text === undefined) {
-        return;
+        this.dude(null);
       }
-
       this.dude(text)
     }
   }
